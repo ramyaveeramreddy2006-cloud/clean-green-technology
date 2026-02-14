@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenCapture</title>
+
+<!-- App Icon -->
+<link rel="icon" href="GreenCapture_App_Icon_250KB.png">
+<link rel="apple-touch-icon" href="GreenCapture_App_Icon_250KB.png">
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#e8f5f0}
+
+/* LOGIN */
+#loginPage{min-height:100vh;display:flex;justify-content:center;align-items:center}
+.login-box{background:#fff;width:100%;max-width:350px;padding:25px;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.2)}
+.login-box h2{text-align:center;color:#0a7c5a}
+.login-box label{margin-top:10px;display:block;font-weight:bold}
+.login-box input{width:100%;padding:10px;margin-top:5px}
+.login-box button{margin-top:20px;width:100%;padding:12px;background:#0a7c5a;color:#fff;border:none;border-radius:5px}
+
+/* SITE */
+#site{display:none}
+
+/* NAVBAR */
+.navbar{background:#0a7c5a;color:#fff;padding:10px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.nav-left{display:flex;align-items:center}
+.nav-left img{height:40px;margin-right:10px}
+.navbar a{color:white;margin:5px 10px;text-decoration:none;font-weight:bold;cursor:pointer}
+.navbar select{padding:5px}
+
+/* CONTENT */
+.page{display:none}
+.container{background:white;margin:15px;padding:20px;border-radius:10px}
+h1,h2{color:#0a7c5a}
+
+/* DASHBOARD */
+.dashboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px}
+.card{background:#f1faf6;padding:15px;border-radius:10px;text-align:center}
+.card h1{color:#0a7c5a}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-box">
+    <h2 id="loginTitle">Login</h2>
+    <label id="userLabel">Username</label>
+    <input id="username">
+    <label id="passLabel">Password</label>
+    <input id="password" type="password">
+    <button onclick="login()" id="loginBtn">Login</button>
+  </div>
+</div>
+
+<!-- WEBSITE -->
+<div id="site">
+  <div class="navbar">
+    <div class="nav-left">
+      <img src="GreenCapture_App_Icon_250KB.png">
+      <b>GreenCapture</b>
+    </div>
+    <div>
+      <select onchange="setLang(this.value)">
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+        <option value="te">Telugu</option>
+        <option value="ta">Tamil</option>
+        <option value="kn">Kannada</option>
+      </select>
+      <a onclick="showPage('home')" id="navHome">Home</a>
+      <a onclick="showPage('tech')" id="navTech">Technology</a>
+      <a onclick="showPage('dash')" id="navDash">Dashboard</a>
+      <a onclick="showPage('proj')" id="navProj">Project</a>
+      <a onclick="logout()" id="navLogout">Logout</a>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="home" class="page">
+    <div class="container">
+      <h1>ANURAG</h1>
+      <h2 id="homeTitle"></h2>
+      <p id="homeText"></p>
+    </div>
+  </div>
+
+  <!-- TECHNOLOGY -->
+  <div id="tech" class="page">
+    <div class="container">
+      <h2 id="techTitle"></h2>
+      <p id="techText"></p>
+      <ul>
+        <li id="tech1"></li>
+        <li id="tech2"></li>
+        <li id="tech3"></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" class="page">
+    <div class="container">
+      <h2 id="dashTitle"></h2>
+      <div class="dashboard">
+        <div class="card"><h1 id="co2">0</h1><p id="d1"></p></div>
+        <div class="card"><h1 id="plants">0</h1><p id="d2"></p></div>
+        <div class="card"><h1 id="products">0</h1><p id="d3"></p></div>
+        <div class="card"><h1 id="reduction">0%</h1><p id="d4"></p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT -->
+  <div id="proj" class="page">
+    <div class="container">
+      <h2 id="projTitle"></h2>
+      <p id="projText"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+function login(){
+  if(username.value && password.value){
+    sessionStorage.setItem("login","yes");
+    showSite();
+  }else alert("Enter username and password");
+}
+function logout(){sessionStorage.clear();location.reload()}
+function showSite(){
+  loginPage.style.display="none";
+  site.style.display="block";
+  updateDashboard();
+  showPage("home");
+}
+function showPage(p){
+  document.querySelectorAll(".page").forEach(x=>x.style.display="none");
+  document.getElementById(p).style.display="block";
+}
+
+/* DAILY UPDATE */
+function updateDashboard(){
+  let t=new Date().toDateString();
+  if(localStorage.getItem("day")!==t){
+    localStorage.setItem("data",JSON.stringify({
+      co2:Math.floor(Math.random()*500+100),
+      plants:Math.floor(Math.random()*40+10),
+      products:Math.floor(Math.random()*10+3),
+      reduction:Math.floor(Math.random()*40+10)
+    }));
+    localStorage.setItem("day",t);
+  }
+  let d=JSON.parse(localStorage.getItem("data"));
+  co2.innerText=d.co2;
+  plants.innerText=d.plants;
+  products.innerText=d.products;
+  reduction.innerText=d.reduction+"%";
+}
+
+/* LANGUAGES */
+const L={
+en:{homeTitle:"CLEAN AND GREEN TECHNOLOGY",homeText:"This project explains how carbon capture and utilisation helps reduce pollution and supports clean and green technology development.",techTitle:"What is Carbon Capture?",techText:"Carbon capture means trapping CO₂ before it enters the atmosphere.",tech1:"Reduces global warming",tech2:"Makes air cleaner",tech3:"Helps protect the environment",dashTitle:"Dashboard (Updated Daily)",d1:"Tonnes of CO₂ / day",d2:"Thermal plants using CCU",d3:"Value-added products",d4:"Emission reduction",projTitle:"Project Details",projText:"This project focuses on reducing carbon emissions from thermal power plants using carbon capture and utilisation technology.",navHome:"Home",navTech:"Technology",navDash:"Dashboard",navProj:"Project",navLogout:"Logout"},
+hi:{homeTitle:"स्वच्छ और हरित प्रौद्योगिकी",homeText:"यह परियोजना कार्बन कैप्चर और उपयोग से प्रदूषण कम करने की जानकारी देती है।",techTitle:"कार्बन कैप्चर क्या है?",techText:"कार्बन कैप्चर CO₂ को वातावरण में जाने से रोकता है।",tech1:"ग्लोबल वार्मिंग कम करता है",tech2:"हवा साफ करता है",tech3:"पर्यावरण की रक्षा करता है",dashTitle:"डैशबोर्ड",d1:"CO₂ टन/दिन",d2:"थर्मल प्लांट",d3:"मूल्य उत्पाद",d4:"उत्सर्जन कमी",projTitle:"परियोजना विवरण",projText:"यह परियोजना कार्बन उत्सर्जन कम करने पर केंद्रित है।",navHome:"होम",navTech:"प्रौद्योगिकी",navDash:"डैशबोर्ड",navProj:"परियोजना",navLogout:"लॉगआउट"},
+te:{homeTitle:"శుభ్రమైన మరియు పచ్చటి సాంకేతికత",homeText:"ఈ ప్రాజెక్ట్ కార్బన్ క్యాప్చర్ కాలుష్యాన్ని ఎలా తగ్గిస్తుందో వివరిస్తుంది.",techTitle:"కార్బన్ క్యాప్చర్ అంటే ఏమిటి?",techText:"CO₂ వాతావరణంలోకి వెళ్లకుండా పట్టుకోవడం.",tech1:"గ్లోబల్ వార్మింగ్ తగ్గింపు",tech2:"గాలి శుభ్రత",tech3:"పర్యావరణ రక్షణ",dashTitle:"డాష్‌బోర్డ్",d1:"రోజుకు CO₂ టన్నులు",d2:"థర్మల్ ప్లాంట్లు",d3:"విలువ ఉత్పత్తులు",d4:"ఉద్గార తగ్గింపు",projTitle:"ప్రాజెక్ట్ వివరాలు",projText:"ఈ ప్రాజెక్ట్ కార్బన్ ఉద్గారాలను తగ్గిస్తుంది.",navHome:"హోమ్",navTech:"సాంకేతికత",navDash:"డాష్‌బోర్డ్",navProj:"ప్రాజెక్ట్",navLogout:"లాగ్ అవుట్"},
+ta:{homeTitle:"சுத்தமான மற்றும் பசுமை தொழில்நுட்பம்",homeText:"இந்த திட்டம் கார்பன் பிடிப்பு மாசுபாட்டை குறைக்க உதவுகிறது.",techTitle:"கார்பன் பிடிப்பு என்றால் என்ன?",techText:"CO₂ வளிமண்டலத்திற்குள் செல்லாமல் தடுக்கிறது.",tech1:"உலக வெப்பமயமாதல் குறைப்பு",tech2:"காற்று தூய்மை",tech3:"சுற்றுச்சூழல் பாதுகாப்பு",dashTitle:"டாஷ்போர்டு",d1:"ஒருநாள் CO₂ டன்",d2:"மின் நிலையங்கள்",d3:"மதிப்பூட்டப்பட்ட பொருட்கள்",d4:"உமிழ்வு குறைப்பு",projTitle:"திட்ட விவரங்கள்",projText:"இந்த திட்டம் கார்பன் உமிழ்வுகளை குறைக்கிறது.",navHome:"முகப்பு",navTech:"தொழில்நுட்பம்",navDash:"டாஷ்போர்டு",navProj:"திட்டம்",navLogout:"வெளியேறு"},
+kn:{homeTitle:"ಶುದ್ಧ ಮತ್ತು ಹಸಿರು ತಂತ್ರಜ್ಞಾನ",homeText:"ಈ ಯೋಜನೆ ಕಾರ್ಬನ್ ಕ್ಯಾಪ್ಚರ್ ಮಾಲಿನ್ಯವನ್ನು ಕಡಿಮೆ ಮಾಡುತ್ತದೆ.",techTitle:"ಕಾರ್ಬನ್ ಕ್ಯಾಪ್ಚರ್ ಎಂದರೇನು?",techText:"CO₂ ವಾತಾವರಣಕ್ಕೆ ಹೋಗುವುದನ್ನು ತಡೆಯುತ್ತದೆ.",tech1:"ಜಾಗತಿಕ ತಾಪಮಾನ ಕಡಿತ",tech2:"ಗಾಳಿಯ ಶುದ್ಧತೆ",tech3:"ಪರಿಸರ ರಕ್ಷಣೆ",dashTitle:"ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",d1:"ದಿನಕ್ಕೆ CO₂ ಟನ್",d2:"ಥರ್ಮಲ್ ಪ್ಲಾಂಟ್‌ಗಳು",d3:"ಮೌಲ್ಯ ಉತ್ಪನ್ನಗಳು",d4:"ಉತ್ಸರ್ಗ ಕಡಿತ",projTitle:"ಯೋಜನೆ ವಿವರಗಳು",projText:"ಈ ಯೋಜನೆ ಕಾರ್ಬನ್ ಉತ್ಸರ್ಗವನ್ನು ಕಡಿಮೆ ಮಾಡುತ್ತದೆ.",navHome:"ಮುಖಪುಟ",navTech:"ತಂತ್ರಜ್ಞಾನ",navDash:"ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",navProj:"ಯೋಜನೆ",navLogout:"ಲಾಗ್ ಔಟ್"}
+};
+
+function setLang(l){
+  const T=L[l]||L.en;
+  for(const k in T){
+    if(document.getElementById(k)) document.getElementById(k).innerText=T[k];
+  }
+}
+
+if(sessionStorage.getItem("login")==="yes") showSite();
+setLang("en");
+</script>
+
+</body>
+</html>
